@@ -43,9 +43,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('newuser',function(data) {
-
-  socket.on('newuser',function(data) {
-    socket.to(data).emit('rival',"Mot to fjsljfl");
     StackOfUsers.push(data);
     console.log(StackOfUsers);
     pushtopair(socket,data);
@@ -120,7 +117,6 @@ io.on('connection', (socket) => {
     socket.broadcast.to(data.room).emit('receive users and code', data)
 <<<<<<< HEAD
   })*/
-  })
 });
 
 

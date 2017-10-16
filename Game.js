@@ -9,14 +9,11 @@ export default class Game1 extends React.Component {
             <Game/>
         );
     }
-
 }
-
 
 function Square(props) {
     return ( 
-        <button  className = "square" disabled = {props.disabled} onClick = { props.onClick} > { props.value}
-        <button className = "square" onClick = { props.onClick} > { props.value} 
+        <button  className = "square" onClick = { props.onClick} > { props.value}
         </button>
     );
 }
@@ -64,8 +61,6 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
-    constructor(props) {
-        super(props);
     constructor() {
         super();
         this.state = {
@@ -100,9 +95,8 @@ class Game extends React.Component {
         });
         console.log("My rival",this.state.rivalsocketid);
         console.log("My socket id",this.state.mysocketid);
-            xIsNext: true
-        };
     }
+    
 
     handleClick(i) {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -163,7 +157,6 @@ class Game extends React.Component {
 
         return ( <div className = "game" >
             <div className = "game-board" >
-            <Board squares  = {
             <Board squares = {
                 current.squares
             }
