@@ -107,13 +107,6 @@ class Game extends React.Component {
             return;
         }
         squares[i] = this.state.xIsNext ? "X" : "O";
-        this.setState({
-            history: history.concat([{
-                squares: squares
-            }]),
-            stepNumber: history.length,
-            xIsNext: !this.state.xIsNext
-        });
         socket.emit('handleClickevent',history,squares,this.state.rivalsocketid,this.state.mysocketid);
     }
 
