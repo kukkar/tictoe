@@ -43,6 +43,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('newuser',function(data) {
+
+  socket.on('newuser',function(data) {
+    socket.to(data).emit('rival',"Mot to fjsljfl");
     StackOfUsers.push(data);
     console.log(StackOfUsers);
     pushtopair(socket,data);
@@ -74,6 +77,20 @@ io.on('connection', (socket) => {
   
 
  /* socket.on('room', function(data) {
+=======
+
+      io.to(first).emit('rival',second); //this is not working
+      io.to(second).emit('rival',first); 
+    } else {
+      //socket.to(data).emit('rival',"Mot to fjsljfl");
+      io.to(data).emit('rival', "fsfss");
+    }
+}
+ 
+  
+
+  socket.on('room', function(data) {
+>>>>>>> da1d60446ac1adee487fb40880688b920e20108b
     console.log('in joining room in SERVER')
     socket.join(data.room);
     console.log(data)
@@ -81,7 +98,10 @@ io.on('connection', (socket) => {
     socket.broadcast.to(data.room).emit('new user join', data.user)
   });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> da1d60446ac1adee487fb40880688b920e20108b
   socket.on('leave room', function(data) {
     socket.broadcast.to(data.room).emit('user left room', {user: data.user})
     socket.leave(data.room)
@@ -98,7 +118,9 @@ io.on('connection', (socket) => {
 
   socket.on('send users and code', function(data) {
     socket.broadcast.to(data.room).emit('receive users and code', data)
+<<<<<<< HEAD
   })*/
+  })
 });
 
 

@@ -13,7 +13,3 @@ socket.on('rival',(pairid) => {
 	console.log("my rival is ",pairid);
 });
 
-
-
-
-
