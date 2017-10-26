@@ -49,8 +49,7 @@ io.on('connection', (socket) => {
   });
    socket.on('handleClickevent',function(history,squares,rivalsocketid,mysocketid) {
     console.log(squares);
-    io.to(rivalsocketid).emit('handleEvents',squares,history); //this is not working
-    io.to(mysocketid).emit('handleEvents',squares,history); 
+    socket.to(rivalsocketid).emit('handleEvents',squares,history); //this is not working
   });
   
  function pushtopair(socket,data) {
@@ -65,7 +64,7 @@ io.on('connection', (socket) => {
       io.to(first).emit('rival',second); //this is not working
       io.to(second).emit('rival',first); 
     } else {
-      io.to(data).emit('rival',null); //this is not working
+      //io.to(data).emit('rival',null); //this is not working
     }
 }
 

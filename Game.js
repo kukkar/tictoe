@@ -13,7 +13,7 @@ export default class Game1 extends React.Component {
 
 function Square(props) {
     return ( 
-        <button  className = "square" onClick = { props.onClick} > { props.value}
+        <button  className = "square"  onClick = { props.onClick} > { props.value}
         </button>
     );
 }
@@ -55,7 +55,7 @@ class Board extends React.Component {
                 this.renderSquare(8)
             } 
             </div> 
-            </div >
+            </div>
         );
     }
 }
@@ -69,7 +69,8 @@ class Game extends React.Component {
             }],
             stepNumber: 0,
             xIsNext: true,
-            rivalsocketid : null
+            rivalsocketid : null,
+            disabled : false
         };
         socket.on('connect', () => {
             console.log(socket.id); // 'G5p5...'
@@ -78,16 +79,41 @@ class Game extends React.Component {
         });
         socket.on('rival', (socketid) => this.RivalUserInState(socketid));
         socket.on('handleEvents',(squares,history) => this.handleState(squares,history));
+        //socket.on('GameStarting',(step)=> this.GameStartHandle(step));
+       // socket.on('Waittingforrival',()=> this.WaittingRival());
     }
 
+    WaittingRival () {
+         this.setState = {
+            history: [{
+                squares: Array(9).fill(null)
+            }],
+            stepNumber: 0,
+            xIsNext: true,
+            rivalsocketid : null,
+            disabled : true
+        };
+        console.log(this.state.disabled);
+    }    
     componentDidMount() {
-        if (this.state.rivalsocketid == null) {
-          //No one is here need to wait
+            if (this.state.rivalsocketid == null) {
+              //No one is here need to wait
+            } else {
+              //Rival is on
+            }
+    }  
+    GameStartHandle(step) {
+        if(step != null) {
+                this.setState({
+                stepNumber: step,
+                xIsNext: (step % 2) === 0,
+                disabled : false
+            });    
         } else {
-          //Rival is on
+            //Show a pop up that waiting for rival to responsd //you apponent is not here
         }
+        
     }
-
     RivalUserInState(socketid) {
         this.setState({
             rivalsocketid :  socketid,
@@ -96,9 +122,12 @@ class Game extends React.Component {
         console.log("My rival",this.state.rivalsocketid);
         console.log("My socket id",this.state.mysocketid);
     }
-    
 
     handleClick(i) {
+        this.setState ({
+            disabled : true
+        })
+        console.log("Iam in handleclick",this.state.disabled);
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
@@ -106,11 +135,6 @@ class Game extends React.Component {
             return;
         }
         squares[i] = this.state.xIsNext ? "X" : "O";
-        socket.emit('handleClickevent',history,squares,this.state.rivalsocketid,this.state.mysocketid);
-    }
-
-    handleState (squares,history) {
-        console.log(squares);
         this.setState({
             history: history.concat([{
                 squares: squares
@@ -118,23 +142,46 @@ class Game extends React.Component {
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext
         });
+        socket.emit('handleClickevent',history,squares,this.state.rivalsocketid,this.state.mysocketid);
+    }
+
+    handleState (squares,history) {
+        console.log(squares);
+        if(squares == null && history == null) {
+
+        } else {
+            this.setState({
+                history: history.concat([{
+                    squares: squares
+                }]),
+                stepNumber: history.length,
+                xIsNext: !this.state.xIsNext,
+                disabled : false
+            });    
+        }
+        
+        console.log("value of diabledin event",this.state.disabled);
     }
 
     jumpTo(step) {
+        console.log("Game Start");
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2) === 0
         });
+        socket.emit('GameStart',step,this.state.rivalsocketid,this.state.mysocketid);
     }
 
     render() {
+        var divStyle = {
+                display:this.state.disableDiv?'block':'none'
+            };
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
         const moves = history.map((step, move) => {
             const desc = move ? "Move #" + move : "Game start";
-            console.log(move);
             return ( <li key = {
                     move
                 } >
@@ -156,7 +203,7 @@ class Game extends React.Component {
         }
 
         return ( <div className = "game" >
-            <div className = "game-board" >
+            <div className = "game-board" style={{ pointerEvents: this.state.disabled ? 'none' : 'auto' }}>
             <Board squares = {
                 current.squares
             }
